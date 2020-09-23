@@ -22,9 +22,10 @@ export default function TodoForm(props) {
 // };
   const handleSubmit = (event) => {
     event.preventDefault();
-    // event.target.reset();
+    // event.reset();
     props.handleSubmit(item);
     setItem({});
+    console.log(item, 'item')
   };
 
   const handleInputChange = (event) => {
@@ -51,7 +52,7 @@ export default function TodoForm(props) {
     </Form.Text>
           </Form.Group>
           <Form.Group controlId="formDifficulty">
-            <Form.Control type="range" min="0" max="5" name="difficulty"/>
+            <Form.Control type="range" min="0" max="5" name="difficulty" onChange={handleInputChange}/>
           </Form.Group>
 
           <Button variant="primary" type="submit" onClick={handleSubmit}>
