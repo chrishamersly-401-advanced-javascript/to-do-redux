@@ -2,35 +2,29 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
+import useForm from './formHook';
 
 export default function TodoForm(props) {
 
-  const [item, setItem] = useState([]);
-//   const handleInput = {
-//     onChange: (event) => {
-//       event.persist();
-//       setValues(values => ({ ...values, [event.target.name]: event.target.value }));
-//     }
-//   }
+  const[handleSubmit , handleInputChange] = useForm(submitForm);
 
-//   return [
-//     handleSubmit,
-//     handleInput,
-//     handleChange,
-//     values,
-//   ];
-// };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // event.reset();
-    props.handleSubmit(item);
-    setItem({});
-    console.log(item, 'item')
-  };
+  function submitForm(task){
+    props.handleSubmit(task);
+  }
 
-  const handleInputChange = (event) => {
-    setItem({...item, [event.target.name]: event.target.value });
-  };
+  // const [item, setItem] = useState([]);
+
+  // const handleSubmit = (event) => {
+  //   event.preventDefault();
+  //   // event.reset();
+  //   props.handleSubmit(item);
+  //   setItem({});
+  //   console.log(item, 'item')
+  // };
+
+  // const handleInputChange = (event) => {
+  //   setItem({...item, [event.target.name]: event.target.value });
+  // };
 
 
 
@@ -56,7 +50,7 @@ export default function TodoForm(props) {
           </Form.Group>
 
           <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Submit
+            Add Item
           </Button>
         </Form>
       </Card.Body>
