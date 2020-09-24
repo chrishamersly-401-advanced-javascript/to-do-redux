@@ -8,47 +8,16 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import axios from 'axios';
-
 import './todo.scss';
-
-function ToDo(props) {
-
-  const [list, setList] = useState([]);
+import useToDo from './toDoHook.js';
 
 
-  const addItem = (item) => {
-    item._id = Math.random();
-    item.complete = false;
-    setList([...list, item]);
-  };
 
-  const toggleComplete = id => {
+function ToDo() {
 
-    let item = list.filter(i => i._id === id)[0] || {};
+  const [list, addItem, deleteItem, toggleComplete] = useToDo('http://localhost:3001/api/v2/todo')
 
-    if (item._id) {
-      item.complete = !item.complete;
-      let newList = list.map(listItem => listItem._id === item._id ? item : listItem);
-      setList(newList);
-    }
-
-  };
-
-
-  useEffect(() => {
-
-    async function fetchData() {
-      // setIsLoading(true);
-      const response = await axios.get('http://localhost:3001/api/v1/todos');
-      const results = response.data.results;
-      setList(results);
-      // setIsLoading(false);
-    }
-
-    fetchData();
-
-  }, []);
-
+ 
   return (
     <>
       <header>
@@ -64,9 +33,7 @@ function ToDo(props) {
             <header>
               <Navbar bg="dark" variant="dark">
                 <Nav className="mr-auto">
-                  {/* ({console.log('list', list)}) */}
-
-                  <Navbar.Brand>To Do List Manager({list.filter(item => !item.complete).length})
+                  <Navbar.Brand>To Do List Manager ({list.filter(item => !item.complete(console.log('item', item))).length})
             </Navbar.Brand>
                 </Nav>
               </Navbar>
@@ -84,6 +51,7 @@ function ToDo(props) {
               <TodoList
                 list={list}
                 handleComplete={toggleComplete}
+                deleteItem={deleteItem}
               />
             </div>
           </Col>

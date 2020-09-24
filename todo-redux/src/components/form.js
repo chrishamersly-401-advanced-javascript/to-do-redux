@@ -12,21 +12,7 @@ export default function TodoForm(props) {
     props.handleSubmit(task);
   }
 
-  // const [item, setItem] = useState([]);
-
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   // event.reset();
-  //   props.handleSubmit(item);
-  //   setItem({});
-  //   console.log(item, 'item')
-  // };
-
-  // const handleInputChange = (event) => {
-  //   setItem({...item, [event.target.name]: event.target.value });
-  // };
-
-
+ 
 
   return (
     <Card>
