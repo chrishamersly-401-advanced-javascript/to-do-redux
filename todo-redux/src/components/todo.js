@@ -15,7 +15,7 @@ import useToDo from './toDoHook.js';
 
 function ToDo() {
 
-  const [list, addItem, deleteItem, toggleComplete] = useToDo('http://localhost/api/v2/todo')
+  const [list, addItem, deleteItem, toggleComplete] = useToDo('http://localhost:3001/api/v2/todo')
 
  
   return (
@@ -33,7 +33,7 @@ function ToDo() {
             <header>
               <Navbar bg="dark" variant="dark">
                 <Nav className="mr-auto">
-                  <Navbar.Brand>To Do List Manager{list.filter(item => !item.complete).length})
+                  <Navbar.Brand>To Do List Manager ({list.filter(item => !item.complete(console.log('item', item))).length})
             </Navbar.Brand>
                 </Nav>
               </Navbar>
