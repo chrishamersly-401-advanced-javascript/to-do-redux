@@ -7,11 +7,12 @@ export default function ToDoList (props) {
     return (
       <ListGroup>
         {props.list.map(item => (
+          
           <ListGroup.Item action variant={item.complete ? "success" : "danger"}
             key={item._id}
           >
             <span onClick={() => props.handleComplete(item._id)}> 
-              {item.text}
+              {item.task}
             </span>
           </ListGroup.Item>
         ))}

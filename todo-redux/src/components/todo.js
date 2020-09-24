@@ -11,7 +11,7 @@ import axios from 'axios';
 
 import './todo.scss';
 
-function ToDo (props) {
+function ToDo(props) {
 
   const [list, setList] = useState([]);
 
@@ -19,7 +19,7 @@ function ToDo (props) {
   const addItem = (item) => {
     item._id = Math.random();
     item.complete = false;
-    setList([...list, item] );
+    setList([...list, item]);
   };
 
   const toggleComplete = id => {
@@ -29,70 +29,68 @@ function ToDo (props) {
     if (item._id) {
       item.complete = !item.complete;
       let newList = list.map(listItem => listItem._id === item._id ? item : listItem);
-      setList({ newList});
+      setList(newList);
     }
 
   };
 
 
-   useEffect( async () => {
-  
-  const response = await axios.get('http://localhost:3000/api/v1/todos');
-    
-    setList(response.data.results);
+  useEffect(() => {
+
+    async function fetchData() {
+      // setIsLoading(true);
+      const response = await axios.get('http://localhost:3001/api/v1/todos');
+      const results = response.data.results;
+      setList(results);
+      // setIsLoading(false);
+    }
+
+    fetchData();
+
   }, []);
-    // let list = [
-    //   { _id: 1, complete: false, text: 'Clean the Kitchen', difficulty: 3, assignee: 'Person A' },
-    //   { _id: 2, complete: false, text: 'Do the Laundry', difficulty: 2, assignee: 'Person A' },
-    //   { _id: 3, complete: false, text: 'Walk the Dog', difficulty: 4, assignee: 'Person B' },
-    //   { _id: 4, complete: true, text: 'Do Homework', difficulty: 3, assignee: 'Person C' },
-    //   { _id: 5, complete: false, text: 'Take a Nap', difficulty: 1, assignee: 'Person B' },
-    // ];
 
- 
+  return (
+    <>
+      <header>
+        <Navbar bg="primary" variant="dark">
+          <Nav className="mr-auto">
+            <Nav.Link href="#home">Home</Nav.Link>
+          </Nav>
+        </Navbar>
+      </header>
+      <Container>
+        <Row>
+          <Col >
+            <header>
+              <Navbar bg="dark" variant="dark">
+                <Nav className="mr-auto">
+                  {/* ({console.log('list', list)}) */}
 
-  
-    return (
-      <>
-        <header>
-          <Navbar bg="primary" variant="dark">
-            <Nav className="mr-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-            </Nav>
-          </Navbar>
-        </header>
-        <Container>
-          <Row>
-            <Col >
-              <header>
-                <Navbar bg="dark" variant="dark">
-                  <Nav className="mr-auto">
-
-                    <Navbar.Brand>To Do List Manager ({list.filter(item => !item.complete).length})
+                  <Navbar.Brand>To Do List Manager({list.filter(item => !item.complete).length})
             </Navbar.Brand>
-                  </Nav>
-                </Navbar>
-              </header>
-            </Col>
-          </Row>
-          <Row>
-            <Col md={4}>
-              <div>
-                <TodoForm handleSubmit={addItem} />
-              </div>
-            </Col>
-            <Col md={8}>
-              <div>
-                <TodoList
-                  list={list}
-                  handleComplete={toggleComplete}
-                />
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </>
-    );
+                </Nav>
+              </Navbar>
+            </header>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={4}>
+            <div>
+              <TodoForm handleSubmit={addItem} />
+            </div>
+          </Col>
+          <Col md={8}>
+            <div>
+              <TodoList
+                list={list}
+                handleComplete={toggleComplete}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
 }
 
 
