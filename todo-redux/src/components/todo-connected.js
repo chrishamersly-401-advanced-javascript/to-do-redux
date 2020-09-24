@@ -4,8 +4,7 @@ import TodoList from './list.js';
 
 import './todo.scss';
 
-const todoAPI = 'http://localhost:3000/api/v1/todo';
-
+const todoAPI = 'http://localhost:3001/api/v1/todos';
 
 function ToDo (props)  {
 
