@@ -6,10 +6,10 @@ const useToDo = (url) => {
 
   const [list, setList] = useState([]);
 
-  const addItem = (item) => {
+  const addItem = async (item) => {
   item.difficulty = parseInt(item.difficulty) || 1;
   item.complete = false;
-  const response =  axios.post(url, item)
+  const response = await axios.post(url, item)
   setList([...list, response.data]);
 };
 
@@ -24,9 +24,9 @@ const toggleComplete = async (id) => {
   item = item.data;
   if (item._id) {
     item.complete = !item.complete;
-    let newList = list.map(listItem => listItem._id === item._id ? item : listItem);
+    let updatedList = list.map(listItem => listItem._id === item._id ? item : listItem);
     axios.patch(`${url}/${id}`, item);
-    setList(newList);
+    setList(updatedList);
   }
 
 };
@@ -43,14 +43,14 @@ useEffect(() => {
 
   fetchData();
 
-}, []);
+}, [url]);
 
-  return [
+  return {
     list,
     addItem,
     deleteItem,
     toggleComplete,
-    ];
+  };
 }
 
 export default useToDo;
