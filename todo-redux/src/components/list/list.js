@@ -1,34 +1,76 @@
-import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup'
-import Toast from 'react-bootstrap/Toast'
+import React, {useState, useContext} from 'react';
 
-export default function ToDoList (props) {
+import Badge from 'react-bootstrap/Badge';
+import Toast from 'react-bootstrap/Toast';
+import Pagination from 'react-bootstrap/Pagination';
 
- 
-    return (
-      <ListGroup>
-        {props.list.map(item => (
-          <>
-          <Toast>
-            <Toast.Header> To Do
-            </Toast.Header>
-            <Toast.Body>
-          
-          <ListGroup.Item action variant={item.complete ? "success" : "danger"} key={item._id}>
-            <span onClick={() => props.handleComplete(item._id)}> 
-              <p>Task: {item.task} </p>
-            </span>
-            <p> Assignee: {item.assignee}</p>
-            <p> Difficulty: {item.difficulty}</p>
-           
-            
-          </ListGroup.Item>
+import {SettingsContext} from '../../context/settings.js';
+
+const TodoList = (props) => {
+
+  const settings = useContext(SettingsContext);
+
+  const [page, setPage] = useState(0);
+
+  // Paginate the list
+  const list = props.list.filter( item => settings.showCompleted ? true : !item.complete );
+  const start = settings.maxVisible * page || 0;
+  const end = start + settings.maxVisible || list.length;
+  const pages = new Array(Math.ceil(list.length / settings.maxVisible)).fill('');
+
+  const displayList = list ? list.slice(start, end) : [];
+
+  const styles = {
+    pill: {
+      marginRight: '1rem',
+      cursor: 'pointer',
+    },
+    difficulty: {
+      display:'block',
+      textAlign:'right',
+    },
+    toast: {
+      maxWidth: '100%',
+      width: '100%',
+    },
+  };
+
+  return (
+
+    <>
+      {displayList.map(item => (
+        <Toast key={item._id} style={styles.toast} onClose={() => props.handleDelete(item._id)}>
+          <Toast.Header closeButton>
+            <Badge pill
+              style={styles.pill}
+              variant={item.complete ? 'danger' : 'success'}
+              onClick={() => props.handleComplete(item._id)}
+            >
+              {item.complete ? 'Complete' : 'Pending'}
+            </Badge>
+            <strong className="mr-auto">{item.assignee}</strong>
+          </Toast.Header>
+          <Toast.Body >
+            {item.text}
+            <small style={styles.difficulty}>Difficulty: {item.difficulty}</small>
           </Toast.Body>
-          </Toast>
-          </>
-        ))}
-      </ListGroup>
-    );
-  
-}
+        </Toast>
+      ))}
+
+      <Pagination>
+        {
+          pages.map( (n,i) =>
+            <Pagination.Item key={i+1} onClick={() => setPage(i)}>
+              {i+1}
+            </Pagination.Item>,
+          )
+        }
+      </Pagination>
+
+    </>
+
+  );
+};
+
+export default TodoList;
 

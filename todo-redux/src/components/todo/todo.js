@@ -1,58 +1,126 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
-import TodoForm from '../form/form.js';
-import TodoList from '../list/list.js';
-import Navbar from 'react-bootstrap/Navbar'
-import Nav from 'react-bootstrap/Nav'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
+import TodoForm from '../form/form';
+import TodoList from '../list/list';
+
+import useAjax from '../hooks/toDoHook.js';
 import './todo.scss';
-import useToDo from '../hooks/toDoHook.js';
+
+const API = process.env.REACT_APP_API;
+
+const ToDo = () => {
+
+  const {request, response} = useAjax();
+
+  const [list, setList] = useState([]);
+
+  const addItem = async (item) => {
+    const options = {
+      method: 'post',
+      url: `${API}/api/v1/todo`,
+      data: item,
+    };
+    request(options);
+  };
+
+  const deleteItem = async (id) => {
+    const options = {
+      method: 'delete',
+      url: `${API}/api/v1/todo/${id}`,
+    };
+    request(options);
+  };
+
+  const toggleComplete = async (id) => {
+
+    const item = list.filter(i => i._id === id)[0] || {};
+
+    if (item._id) {
+      const options = {
+        method: 'put',
+        url: `${API}/api/v1/todo/${id}`,
+        data: { complete: !item.complete },
+      };
+      request(options);
+    }
+
+  };
+
+  const getToDoList = useCallback( async () => {
+    const options = {
+      method: 'get',
+      url: `${API}/api/v1/todo`,
+    };
+    request(options);
+  }, [request]);
 
 
 
-function ToDo() {
+  useEffect( () => {
+    if ( response.results ) {
+      response.results && setList(response.results);
+    }
+    else {
+      getToDoList();
+    }
+  }, [response, getToDoList, setList]);
 
-  const {list, addItem, deleteItem, toggleComplete} = useToDo('http://localhost:3001/api/v1/todos')
+  useEffect(() => {
+    let incomplete = list.filter(item => !item.complete).length;
+    document.title = `To Do List: ${incomplete}`;
+  });
 
- 
+  // Runs on app load
+  useEffect( () => {
+    getToDoList();
+  }, [getToDoList]);
+
   return (
     <>
-      <Container>
-        <Row>
-          <Col >
-            <header>
+      <header>
+        <Navbar bg="primary" variant="dark">
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Link href="/">Home</Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+       </Navbar>
+      </header>
+
+        <Container>
+          <Row style={{margin:'1rem 0'}}>
+            <Col>
               <Navbar bg="dark" variant="dark">
-                <Nav className="mr-auto">
-                  <Navbar.Brand>To Do List Manager ({list.filter(item => !item.complete).length})
-            </Navbar.Brand>
-                </Nav>
+                <Navbar.Brand href="#home">To Do List Manager ({list.filter(item => !item.complete).length})</Navbar.Brand>
               </Navbar>
-            </header>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={4}>
-            <div>
-              <TodoForm handleSubmit={addItem} />
-            </div>
-          </Col>
-          <Col md={8}>
-            <div>
-              <TodoList
-                list={list}
-                handleComplete={toggleComplete}
-                deleteItem={deleteItem}
-              />
-            </div>
-          </Col>
-        </Row>
-      </Container>
+            </Col>
+          </Row>
+          <Row>
+            <Col md="auto" style={{margin: '1rem'}}>
+
+                <TodoForm handleSubmit={addItem} />
+
+            </Col>
+            <Col style={{margin: '1rem'}}>
+
+                <TodoList
+                  list={list}
+                  handleComplete={toggleComplete}
+                  handleDelete={deleteItem}
+                />
+
+            </Col>
+          </Row>
+        </Container>
     </>
   );
-}
-
+};
 
 export default ToDo;
