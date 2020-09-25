@@ -1,48 +1,47 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Card from 'react-bootstrap/Card'
+
 import useForm from '../hooks/formHook';
 
-export default function TodoForm(props) {
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 
-  const[handleSubmit , handleInputChange] = useForm(submitForm);
+const TodoForm = props => {
 
-  function submitForm(task){
-    props.handleSubmit(task);
-  }
-
- 
+  const { handleChange, handleSubmit } = useForm(props.handleSubmit);
 
   return (
-    <Card>
-      <Card.Body>
-         <h3> Add Item </h3>
-        <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formBasicTasks">
-            <Form.Label>To Do Item</Form.Label>
-            <Form.Control name="task" placeholder="Add To Do List Item" onChange={handleInputChange}/>
-            <Form.Text className="text-muted">
-          </Form.Text>
-        </Form.Group>
-          <Form.Group controlId="formBasicTasks">
-            <Form.Label>Assigned To </Form.Label>
-            <Form.Control name="assignee" placeholder="Assignee" onChange={handleInputChange}/>
-            <Form.Text className="text-muted">
-    </Form.Text>
-          </Form.Group>
-          <Form.Group controlId="formDifficulty">
-            <Form.Control type="range" min="0" max="5" name="difficulty" onChange={handleInputChange}/>
-          </Form.Group>
+    <>
 
-          <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Add Item
-          </Button>
-        </Form>
-      </Card.Body>
-    </Card>
-  )
-}
+      <Form onSubmit={handleSubmit}>
 
+        <Card style={{ width: '18rem' }}>
+          <Card.Body>
+            <Card.Title>Add To Do Item</Card.Title>
 
-// export default TodoForm;
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label>To Do Item</Form.Label>
+              <Form.Control onChange={handleChange} name="text" type="text" placeholder="Item Details" />
+            </Form.Group>
+
+            <Form.Group controlId="formBasicPassword">
+              <Form.Label>Assigned To</Form.Label>
+              <Form.Control onChange={handleChange} name="assignee" type="text" placeholder="Assignee Name" />
+            </Form.Group>
+
+            <Form.Group controlId="formBasicCheckbox">
+              <Form.Label>Difficulty</Form.Label>
+              <Form.Control onChange={handleChange} defaultValue={3} type="range" min={1} max={5} name="difficulty" />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">Add Item</Button>
+          </Card.Body>
+        </Card>
+
+      </Form>
+
+    </>
+  );
+};
+
+export default TodoForm;

@@ -1,56 +1,30 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const useAjax = () => {
 
-const useToDo = (url) => {
+  const [options, request] = useState({});
+  const [response, setResponse] = useState({});
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [list, setList] = useState([]);
+  useEffect(() => {
+    async function ajax() {
+      if (!options) { return; }
+      setIsLoading(true);
+      try {
+        const res = await axios(options);
+        setResponse(res.data);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+      }
+    }
+    ajax();
+  }, [options]);
 
-  const addItem = async (item) => {
-  item.difficulty = parseInt(item.difficulty) || 1;
-  item.complete = false;
-  const response = await axios.post(url, item)
-  setList([...list, response.data]);
-};
-
-
-const deleteItem = async (id) => {
-  await axios.delete(`${url}/${id}}`)
-}
-
-const toggleComplete = async (id) => {
-
-  let item = await axios.get(`${url}/${id}`)
-  item = item.data;
-  if (item._id) {
-    item.complete = !item.complete;
-    let updatedList = list.map(listItem => listItem._id === item._id ? item : listItem);
-    axios.patch(`${url}/${id}`, item);
-    setList(updatedList);
-  }
+  return { request, response, error, isLoading };
 
 };
 
-useEffect(() => {
-
-  async function fetchData() {
-    // setIsLoading(true);
-    const response = await axios.get(url);
-    const results = response.data.results;
-    setList(results);
-    // setIsLoading(false);
-  }
-
-  fetchData();
-
-}, [url]);
-
-  return {
-    list,
-    addItem,
-    deleteItem,
-    toggleComplete,
-  };
-}
-
-export default useToDo;
+export default useAjax;
